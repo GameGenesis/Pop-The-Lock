@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public static event Action<int> onTurnCounterUpdate;
 
     [SerializeField]
+    private Animator lockAnimator;
+    [SerializeField]
     private Transform lockCircle;
     [SerializeField]
     private float lockRadius;
@@ -19,10 +21,15 @@ public class GameManager : MonoBehaviour
 
     private int currentTurns;
 
+    private bool hasWon = false;
+    private bool hasLost = false;
+
     private void Awake()
     {
         currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
         lockPin = FindObjectOfType<LockPin>();
+        if (lockAnimator != null)
+            lockAnimator.enabled = false;
     }
 
     private void Start()
@@ -32,7 +39,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (lockCircle == null || lockPin == null)
+        if (Input.GetKeyDown(KeyCode.R))
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if ((hasWon || hasLost) && Input.anyKeyDown)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        if (lockCircle == null || lockPin == null || !lockCircle.gameObject.activeSelf)
             return;
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -45,7 +57,10 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                lockPin.CurrentVelocity = 0;
+                lockCircle.gameObject.SetActive(false);
+                Camera.main.backgroundColor = new Color(0.8f, 0.215f, 0.215f);
+                hasLost = true;
             }
         }
     }
@@ -98,10 +113,17 @@ public class GameManager : MonoBehaviour
         currentTurns--;
         onTurnCounterUpdate?.Invoke(currentTurns);
         if (currentTurns <= 0)
-        {
-            currentLevel++;
-            PlayerPrefs.SetInt("CurrentLevel", currentLevel);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+            Win();
+    }
+
+    private void Win()
+    {
+        lockPin.CurrentVelocity = 0;
+        lockCircle.gameObject.SetActive(false);
+        currentLevel++;
+        PlayerPrefs.SetInt("CurrentLevel", currentLevel);
+        hasWon = true;
+        if (lockAnimator != null)
+            lockAnimator.enabled = true;
     }
 }
