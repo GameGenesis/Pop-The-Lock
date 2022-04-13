@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class LevelManager
 {
-    public static int totalLevelCount = 5;
+    public static int totalLevelCount = 50;
     public static AnimationCurve levelCurve = AnimationCurve.Linear(1f, 0.2f, totalLevelCount, 1f);
 
     public static LevelProperties GetLevelProperties(int level)
@@ -12,9 +12,9 @@ public static class LevelManager
 
         levelProperties.difficultyFactor = difficultyFactor;
         levelProperties.levelColor = Color.HSVToRGB(difficultyFactor, 0.4f, 0.4f);
-        levelProperties.maxTurns = Mathf.RoundToInt(20 * difficultyFactor / 5) * 5;
+        levelProperties.maxTurns = Mathf.RoundToInt(50 * difficultyFactor / 5) * 5;
         levelProperties.startingVelocity = Mathf.Max(60, 150 * difficultyFactor);
-        levelProperties.maxVelocity = Mathf.Max(80, 300 * difficultyFactor);
+        levelProperties.maxVelocity = Mathf.Max(90, 300 * difficultyFactor);
         levelProperties.minAngleOffset = Mathf.RoundToInt(30f - (10f * difficultyFactor));
         levelProperties.maxAngleOffset = Mathf.RoundToInt(60f - (30f * difficultyFactor));
 

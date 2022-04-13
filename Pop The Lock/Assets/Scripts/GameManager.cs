@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
         lockPin = FindObjectOfType<LockPin>();
     }
 
@@ -88,6 +89,8 @@ public class GameManager : MonoBehaviour
     {
         if (Mathf.Abs(lockPin.CurrentVelocity) < levelProperties.maxVelocity)
             lockPin.CurrentVelocity *= -1.05f;
+        else
+            lockPin.CurrentVelocity *= -1f;
     }
 
     private void UpdateCurrentTurnCount()
@@ -97,6 +100,7 @@ public class GameManager : MonoBehaviour
         if (currentTurns <= 0)
         {
             currentLevel++;
+            PlayerPrefs.SetInt("CurrentLevel", currentLevel);
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }

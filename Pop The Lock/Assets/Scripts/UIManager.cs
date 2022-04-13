@@ -6,6 +6,14 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI turnCounter;
 
+    [SerializeField]
+    private TextMeshProUGUI levelCounter;
+
+    private void Awake()
+    {
+        UpdateLevelCounter(GameManager.currentLevel);
+    }
+
     private void OnEnable()
     {
         GameManager.onTurnCounterUpdate += UpdateTurnCounter;
@@ -20,4 +28,9 @@ public class UIManager : MonoBehaviour
     {
         turnCounter.text = turnCount.ToString();
     }
+    public void UpdateLevelCounter(int level)
+    {
+        levelCounter.text = $"Level {level}";
+    }
+
 }
