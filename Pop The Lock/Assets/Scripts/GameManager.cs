@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,9 +23,6 @@ public class GameManager : MonoBehaviour
 
     private int currentTurns;
 
-    private bool hasWon = false;
-    private bool hasLost = false;
-
     private void Awake()
     {
         currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
@@ -34,16 +33,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SetUpLevel();
+        StartCoroutine(SetUpLevel());
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        if ((hasWon || hasLost) && Input.anyKeyDown)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
         if (lockCircle == null || lockPin == null || !lockCircle.gameObject.activeSelf)
             return;
 
@@ -60,7 +54,8 @@ public class GameManager : MonoBehaviour
                 lockPin.CurrentVelocity = 0;
                 lockCircle.gameObject.SetActive(false);
                 Camera.main.backgroundColor = new Color(0.8f, 0.215f, 0.215f);
-                hasLost = true;
+                StopAllCoroutines();
+                StartCoroutine(ResetScene(0.7f));
             }
         }
     }
@@ -77,15 +72,15 @@ public class GameManager : MonoBehaviour
             lockPin.onLockPinCollision -= SetCollisionStatus;
     }
 
-    private void SetUpLevel()
+    private IEnumerator SetUpLevel()
     {
         levelProperties = LevelManager.GetLevelProperties(currentLevel);
-        Debug.Log(levelProperties.levelColor);
         Camera.main.backgroundColor = levelProperties.levelColor;
-        lockPin.CurrentVelocity = levelProperties.startingVelocity;
         MoveLockCircle();
         currentTurns = levelProperties.maxTurns;
         onTurnCounterUpdate?.Invoke(currentTurns);
+        yield return new WaitForSeconds(0.4f);
+        lockPin.CurrentVelocity = levelProperties.startingVelocity;
     }
 
     private void SetCollisionStatus(bool colliding)
@@ -122,8 +117,14 @@ public class GameManager : MonoBehaviour
         lockCircle.gameObject.SetActive(false);
         currentLevel++;
         PlayerPrefs.SetInt("CurrentLevel", currentLevel);
-        hasWon = true;
         if (lockAnimator != null)
             lockAnimator.enabled = true;
+        StartCoroutine(ResetScene(1.75f));
+    }
+
+    private IEnumerator ResetScene(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
