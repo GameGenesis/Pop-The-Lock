@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
     private void UpdateLockPinVelocity()
     {
         if (Mathf.Abs(lockPin.CurrentVelocity) < levelProperties.maxVelocity)
-            lockPin.CurrentVelocity *= -1.05f;
+            lockPin.CurrentVelocity *= -1.04f;
         else
             lockPin.CurrentVelocity *= -1f;
     }
