@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public static int currentLevel = 1;
     public static event Action<int> onTurnCounterUpdate;
+    public static event Action onFirstInput;
 
     [SerializeField]
     private Transform lockTransform;
@@ -33,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(SetUpLevel());
+        SetUpLevel();
     }
 
     private void Update()
@@ -46,6 +47,9 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
         {
+            if (currentLevel == 1)
+                onFirstInput?.Invoke();
+
             if (isPinColliding)
             {
                 MoveLockCircle();
@@ -54,6 +58,11 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                if (lockPin.CurrentVelocity == 0)
+                {
+                    lockPin.CurrentVelocity = levelProperties.startingVelocity;
+                    return;
+                }
                 lockPin.CurrentVelocity = 0;
                 lockCircle.gameObject.SetActive(false);
                 Camera.main.backgroundColor = new Color(0.8f, 0.215f, 0.215f);
@@ -86,15 +95,13 @@ public class GameManager : MonoBehaviour
         LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    private IEnumerator SetUpLevel()
+    private void SetUpLevel()
     {
         levelProperties = LevelManager.GetLevelProperties(currentLevel);
         Camera.main.backgroundColor = levelProperties.levelColor;
         MoveLockCircle();
         currentTurns = levelProperties.maxTurns;
         onTurnCounterUpdate?.Invoke(currentTurns);
-        yield return new WaitForSeconds(0.4f);
-        lockPin.CurrentVelocity = levelProperties.startingVelocity;
     }
 
     private void SetCollisionStatus(bool colliding)
