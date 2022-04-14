@@ -552,6 +552,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f3c8c8c7d5df43419ed2c58cf318ee8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCamera: {fileID: 519420031}
   lockTransform: {fileID: 2093785584}
   lockAnimator: {fileID: 2093785585}
   lockCircle: {fileID: 1091608249}

@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     public static event Action onFirstInput;
 
     [SerializeField]
+    private Camera mainCamera;
+    [SerializeField]
     private Transform lockTransform;
     [SerializeField]
     private Animator lockAnimator;
@@ -67,7 +69,7 @@ public class GameManager : MonoBehaviour
                 }
                 lockPin.CurrentVelocity = 0;
                 lockCircle.gameObject.SetActive(false);
-                Camera.main.backgroundColor = new Color(0.8f, 0.215f, 0.215f);
+                mainCamera.backgroundColor = new Color(0.8f, 0.215f, 0.215f);
                 lockAnimator.SetTrigger("Jiggle");
                 StopAllCoroutines();
                 StartCoroutine(ResetScene(0.7f));
@@ -99,14 +101,14 @@ public class GameManager : MonoBehaviour
 
     public void PanCameraEntry()
     {
-        Camera.main.GetComponent<Animator>().SetTrigger("PanLeft");
+        mainCamera.GetComponent<Animator>().SetTrigger("PanLeft");
     }
 
     public void SetUpLevel()
     {
         lockAnimator.SetBool("Unlocked", false);
         levelProperties = LevelManager.GetLevelProperties(currentLevel);
-        Camera.main.backgroundColor = levelProperties.levelColor;
+        mainCamera.backgroundColor = levelProperties.levelColor;
         currentTurns = levelProperties.maxTurns;
         onTurnCounterUpdate?.Invoke(currentTurns);
         onLevelUpdate?.Invoke(currentLevel);
@@ -166,7 +168,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         if (transition)
         {
-            Camera.main.GetComponent<Animator>().SetTrigger("PanRight");
+            mainCamera.GetComponent<Animator>().SetTrigger("PanRight");
         }
         else
         {
