@@ -14,8 +14,6 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        UpdateLevelCounter(GameManager.currentLevel);
-
         if (GameManager.currentLevel == 1)
         {
             helpText.SetActive(true);
@@ -31,12 +29,14 @@ public class UIManager : MonoBehaviour
     {
         GameManager.onTurnCounterUpdate += UpdateTurnCounter;
         GameManager.onFirstInput += DisableHelpText;
+        GameManager.onLevelUpdate += UpdateLevelCounter;
     }
 
     private void OnDisable()
     {
         GameManager.onTurnCounterUpdate -= UpdateTurnCounter;
         GameManager.onFirstInput -= DisableHelpText;
+        GameManager.onLevelUpdate -= UpdateLevelCounter;
     }
 
     public void ResetData()

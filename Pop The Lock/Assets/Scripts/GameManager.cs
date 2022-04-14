@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public static int currentLevel = 1;
     public static event Action<int> onTurnCounterUpdate;
+    public static event Action<int> onLevelUpdate;
     public static event Action onFirstInput;
 
     [SerializeField]
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        PanCameraEntry();
         SetUpLevel();
     }
 
@@ -66,7 +68,7 @@ public class GameManager : MonoBehaviour
                 lockPin.CurrentVelocity = 0;
                 lockCircle.gameObject.SetActive(false);
                 Camera.main.backgroundColor = new Color(0.8f, 0.215f, 0.215f);
-                lockAnimator.SetTrigger("Lock");
+                lockAnimator.SetTrigger("Jiggle");
                 StopAllCoroutines();
                 StartCoroutine(ResetScene(0.7f));
             }
@@ -95,13 +97,30 @@ public class GameManager : MonoBehaviour
         LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    private void SetUpLevel()
+    public void PanCameraEntry()
     {
+        Camera.main.GetComponent<Animator>().SetTrigger("PanLeft");
+    }
+
+    public void SetUpLevel()
+    {
+        lockAnimator.SetBool("Unlocked", false);
         levelProperties = LevelManager.GetLevelProperties(currentLevel);
         Camera.main.backgroundColor = levelProperties.levelColor;
-        MoveLockCircle();
         currentTurns = levelProperties.maxTurns;
         onTurnCounterUpdate?.Invoke(currentTurns);
+        onLevelUpdate?.Invoke(currentLevel);
+        ResetLockPin();
+        lockCircle.gameObject.SetActive(true);
+        MoveLockCircle();
+    }
+
+    private void ResetLockPin()
+    {
+        lockPin.transform.localPosition = new Vector2(0, 1.505f);
+        lockPin.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        lockPin.CurrentAngle = 0;
+        lockPin.CurrentVelocity = 0;
     }
 
     private void SetCollisionStatus(bool colliding)
@@ -138,13 +157,20 @@ public class GameManager : MonoBehaviour
         lockCircle.gameObject.SetActive(false);
         currentLevel++;
         PlayerPrefs.SetInt("CurrentLevel", currentLevel);
-        lockAnimator.SetTrigger("Unlock");
-        StartCoroutine(ResetScene(1.75f));
+        lockAnimator.SetBool("Unlocked", true);
+        StartCoroutine(ResetScene(1f, true));
     }
 
-    private IEnumerator ResetScene(float seconds)
+    private IEnumerator ResetScene(float seconds, bool transition = false)
     {
         yield return new WaitForSeconds(seconds);
-        ReloadScene();
+        if (transition)
+        {
+            Camera.main.GetComponent<Animator>().SetTrigger("PanRight");
+        }
+        else
+        {
+            SetUpLevel();
+        }
     }
 }
