@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public static int currentLevel = 1;
     public static event Action<int> onTurnCounterUpdate;
 
+    [SerializeField]
+    private Transform lockTransform;
     [SerializeField]
     private Animator lockAnimator;
     [SerializeField]
@@ -27,8 +29,6 @@ public class GameManager : MonoBehaviour
     {
         currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
         lockPin = FindObjectOfType<LockPin>();
-        if (lockAnimator != null)
-            lockAnimator.enabled = false;
     }
 
     private void Start()
@@ -41,7 +41,10 @@ public class GameManager : MonoBehaviour
         if (lockCircle == null || lockPin == null || !lockCircle.gameObject.activeSelf)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
         {
             if (isPinColliding)
             {
@@ -54,6 +57,7 @@ public class GameManager : MonoBehaviour
                 lockPin.CurrentVelocity = 0;
                 lockCircle.gameObject.SetActive(false);
                 Camera.main.backgroundColor = new Color(0.8f, 0.215f, 0.215f);
+                lockAnimator.SetTrigger("Lock");
                 StopAllCoroutines();
                 StartCoroutine(ResetScene(0.7f));
             }
@@ -70,6 +74,16 @@ public class GameManager : MonoBehaviour
     {
         if (lockPin != null)
             lockPin.onLockPinCollision -= SetCollisionStatus;
+    }
+
+    public static void LoadScene(int buildIndex)
+    {
+        SceneManager.LoadScene(buildIndex);
+    }
+
+    public static void ReloadScene()
+    {
+        LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private IEnumerator SetUpLevel()
@@ -92,7 +106,7 @@ public class GameManager : MonoBehaviour
     {
         float angleMultiplier = lockPin.CurrentVelocity <= 0 ? 0 : 1;
         float angle = (lockPin.CurrentAngle + (UnityEngine.Random.Range(levelProperties.minAngleOffset, levelProperties.maxAngleOffset) * angleMultiplier)) * Mathf.Deg2Rad;
-        lockCircle.position = new Vector2(Mathf.Cos(angle) * lockRadius, Mathf.Sin(angle) * lockRadius);
+        lockCircle.position = new Vector2(Mathf.Cos(angle) * lockRadius + lockTransform.position.x, Mathf.Sin(angle) * lockRadius + lockTransform.position.y);
     }
 
     private void UpdateLockPinVelocity()
@@ -117,14 +131,13 @@ public class GameManager : MonoBehaviour
         lockCircle.gameObject.SetActive(false);
         currentLevel++;
         PlayerPrefs.SetInt("CurrentLevel", currentLevel);
-        if (lockAnimator != null)
-            lockAnimator.enabled = true;
+        lockAnimator.SetTrigger("Unlock");
         StartCoroutine(ResetScene(1.75f));
     }
 
     private IEnumerator ResetScene(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        ReloadScene();
     }
 }

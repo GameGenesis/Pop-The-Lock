@@ -4,7 +4,7 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI turnCounter;
+    private TextMeshPro turnCounter;
 
     [SerializeField]
     private TextMeshProUGUI levelCounter;
@@ -28,9 +28,16 @@ public class UIManager : MonoBehaviour
     {
         turnCounter.text = turnCount.ToString();
     }
+
     public void UpdateLevelCounter(int level)
     {
         levelCounter.text = $"Level {level}";
+    }
+
+    public void ResetData()
+    {
+        PlayerPrefs.DeleteAll();
+        GameManager.ReloadScene();
     }
 
 }

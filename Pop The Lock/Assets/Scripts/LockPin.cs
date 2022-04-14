@@ -10,7 +10,7 @@ public class LockPin : MonoBehaviour
 
     private void Update()
     {
-        transform.RotateAround(Vector3.zero, Vector3.back, CurrentVelocity * Time.deltaTime);
+        transform.RotateAround(transform.parent.position, Vector3.back, CurrentVelocity * Time.deltaTime);
         CurrentAngle = Vector2.Angle(Vector2.up, transform.localPosition);
     }
 
