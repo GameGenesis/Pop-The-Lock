@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Camera mainCamera;
     [SerializeField]
+    private AudioManager audioManager;
+    [SerializeField]
     private Transform lockTransform;
     [SerializeField]
     private Animator lockAnimator;
@@ -59,6 +61,7 @@ public class GameManager : MonoBehaviour
                 MoveLockCircle();
                 UpdateLockPinVelocity();
                 UpdateCurrentTurnCount();
+                audioManager.Play("Pop");
             }
             else
             {
@@ -155,6 +158,7 @@ public class GameManager : MonoBehaviour
 
     private void Win()
     {
+        audioManager.Play("Win");
         lockPin.CurrentVelocity = 0;
         lockCircle.gameObject.SetActive(false);
         currentLevel++;
