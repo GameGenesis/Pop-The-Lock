@@ -15,9 +15,9 @@ public static class LevelManager
         levelProperties.difficultyFactor = levelCurveFactor;
         levelProperties.levelColor = Color.HSVToRGB(colorCurve.Evaluate(level % colorSpectrumRange), 0.6f, 0.6f);
         levelProperties.maxTurns = Mathf.Min(totalLevelCount, level);
+        levelProperties.velocityMultiplier = 1.045f - (0.02f * levelCurveFactor);
         levelProperties.startingVelocity = 40 + 135 * levelCurveFactor;
-        levelProperties.velocityMultiplier = 1.05f - (0.02f * levelCurveFactor);
-        levelProperties.maxVelocity = 100 + 175 * levelCurveFactor;
+        levelProperties.maxVelocity = 90 + 185 * levelCurveFactor;
         levelProperties.minAngleOffset = Mathf.RoundToInt(35f - (10f * levelCurveFactor));
         levelProperties.maxAngleOffset = Mathf.RoundToInt(55f - (30f * levelCurveFactor));
 
