@@ -14,8 +14,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Camera mainCamera;
     [SerializeField]
-    private AudioManager audioManager;
-    [SerializeField]
     private Transform lockTransform;
     [SerializeField]
     private Animator lockAnimator;
@@ -61,7 +59,7 @@ public class GameManager : MonoBehaviour
                 MoveLockCircle();
                 UpdateLockPinVelocity();
                 UpdateCurrentTurnCount();
-                audioManager.Play("Pop");
+                AudioManager.instance.Play("Pop");
             }
             else
             {
@@ -70,6 +68,8 @@ public class GameManager : MonoBehaviour
                     lockPin.CurrentVelocity = levelProperties.startingVelocity;
                     return;
                 }
+
+                AudioManager.instance.Play("Fail");
                 lockPin.CurrentVelocity = 0;
                 lockCircle.gameObject.SetActive(false);
                 mainCamera.backgroundColor = new Color(0.8f, 0.215f, 0.215f);
@@ -158,13 +158,13 @@ public class GameManager : MonoBehaviour
 
     private void Win()
     {
-        audioManager.Play("Win");
+        AudioManager.instance.Play("Win");
         lockPin.CurrentVelocity = 0;
         lockCircle.gameObject.SetActive(false);
         currentLevel++;
         PlayerPrefs.SetInt("CurrentLevel", currentLevel);
         lockAnimator.SetBool("Unlocked", true);
-        StartCoroutine(ResetScene(1f, true));
+        StartCoroutine(ResetScene(0.8f, true));
     }
 
     private IEnumerator ResetScene(float seconds, bool transition = false)

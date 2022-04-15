@@ -553,7 +553,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 519420031}
-  audioManager: {fileID: 789930977}
   lockTransform: {fileID: 2093785584}
   lockAnimator: {fileID: 2093785585}
   lockCircle: {fileID: 1091608249}
@@ -764,7 +763,17 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Pop
     clip: {fileID: 8300000, guid: 8221d882f50d42d4c8316997ce9d5ce7, type: 3}
-    volume: 0.5
+    volume: 0.25
+    volumeVariance: 0
+    pitch: 1
+    pitchVariance: 0.05
+    playOnAwake: 0
+    loop: 0
+    mixerGroup: {fileID: 24300002, guid: c0a4f32a59a33584ca5d7365bd54aa23, type: 2}
+    source: {fileID: 0}
+  - name: Win
+    clip: {fileID: 8300000, guid: 2538aa60919c9ef44a18039f009f736d, type: 3}
+    volume: 0.35
     volumeVariance: 0
     pitch: 1
     pitchVariance: 0
@@ -772,9 +781,9 @@ MonoBehaviour:
     loop: 0
     mixerGroup: {fileID: 24300002, guid: c0a4f32a59a33584ca5d7365bd54aa23, type: 2}
     source: {fileID: 0}
-  - name: Win
-    clip: {fileID: 8300000, guid: 2538aa60919c9ef44a18039f009f736d, type: 3}
-    volume: 0.5
+  - name: Fail
+    clip: {fileID: 8300000, guid: 41079dcf19057dc48baca2bb6adf86be, type: 3}
+    volume: 0.2
     volumeVariance: 0
     pitch: 1
     pitchVariance: 0
