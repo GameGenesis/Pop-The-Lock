@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        LevelManager.levelCurve = new AnimationCurve(new Keyframe(1f, 0.2f, 0.25f, 0.02f),
+                                                     new Keyframe(LevelManager.totalLevelCount, 1f));
         currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
         lockPin = FindObjectOfType<LockPin>();
     }
@@ -142,10 +144,9 @@ public class GameManager : MonoBehaviour
 
     private void UpdateLockPinVelocity()
     {
+        lockPin.CurrentVelocity *= -1f;
         if (Mathf.Abs(lockPin.CurrentVelocity) < levelProperties.maxVelocity)
-            lockPin.CurrentVelocity *= -1.04f;
-        else
-            lockPin.CurrentVelocity *= -1f;
+            lockPin.CurrentVelocity *= levelProperties.velocityMultiplier;
     }
 
     private void UpdateCurrentTurnCount()
